@@ -1,18 +1,23 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from sqlmodel import SQLModel
+from fastapi.openapi.utils import get_openapi
 import os
 
-
-from backend.db import engine, init_db
+from backend.db import init_db
 from backend.auth import router as auth_router
 from backend.routers.records import router as records_router
 from backend.routers.analytics import router as analytics_router
 from backend.routers.reports import router as reports_router
 
-
-app = FastAPI(title="CXR QC Backend")
+app = FastAPI(
+    title="CXR QC Backend",
+    version="1.0.0",
+    swagger_ui_parameters={
+        "persistAuthorization": True,
+        "oauth2RedirectUrl": "http://localhost:8000/docs/oauth2-redirect"
+    }
+)
 
 origins = [
     "http://localhost",
@@ -28,10 +33,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# create upload dir if missing
 UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
@@ -48,3 +51,42 @@ def on_startup():
 @app.get("/")
 def root():
     return {"message": "CXR QC Backend running"}
+
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    
+    openapi_schema = get_openapi(
+        title="CXR QC Backend",
+        version="1.0.0",
+        description="API for Chest X-ray QC system with JWT authentication",
+        routes=app.routes,
+    )
+    
+    # Define the security scheme
+    openapi_schema["components"] = {
+        "securitySchemes": {
+            "OAuth2PasswordBearer": {
+                "type": "oauth2",
+                "flows": {
+                    "password": {
+                        "tokenUrl": "auth/login",
+                        "scopes": {}
+                    }
+                }
+            }
+        }
+    }
+    
+    # Apply security to all routes
+    openapi_schema["security"] = [
+        {
+            "OAuth2PasswordBearer": []
+        }
+    ]
+    
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi

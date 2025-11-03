@@ -17,7 +17,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 router = APIRouter()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
 class Token(BaseModel):
@@ -64,8 +64,8 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 
 @router.post("/login", response_model=Token)
-def login(login_in: LoginIn):
-    user = authenticate_user(login_in.username, login_in.password)
+async def login(username: str, password: str):
+    user = authenticate_user(username, password)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect credentials")
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)

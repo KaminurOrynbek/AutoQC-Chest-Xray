@@ -6,17 +6,32 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
 from backend.db import engine
-from backend.models import ScanRecord, QCFinding
+from backend.models import ScanRecord, QCFinding, Report
 from backend.auth import get_current_user
-
-
-router = APIRouter()
 
 STORAGE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "uploads")
 
+router = APIRouter(
+    tags=["reports"]
+)
 
-@router.post("/{patient_id}/generate")
-def generate_report(patient_id: str, user=Depends(get_current_user)):
+from fastapi.security import HTTPBearer
+from jose import JWTError, jwt
+from backend.auth import SECRET_KEY, ALGORITHM
+
+security = HTTPBearer()
+
+@router.post("/{patient_id}/generate", summary="Generate Report")
+def generate_report(patient_id: str, token: str):
+    try:
+        # Verify the token
+        payload = jwt.decode(token.replace("Bearer ", ""), SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+        if not username:
+            raise HTTPException(status_code=401, detail="Invalid token")
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
     with Session(engine) as session:
         record = session.exec(select(ScanRecord).where(ScanRecord.patient_id == patient_id)).first()
         if not record:
@@ -24,7 +39,6 @@ def generate_report(patient_id: str, user=Depends(get_current_user)):
 
         findings = session.exec(select(QCFinding).where(QCFinding.scan_id == record.id)).all()
 
-        # create PDF
         filename = f"report_{patient_id}.pdf"
         filepath = os.path.join(STORAGE_DIR, filename)
         c = canvas.Canvas(filepath, pagesize=letter)
@@ -49,11 +63,12 @@ def generate_report(patient_id: str, user=Depends(get_current_user)):
         return {"report_id": report.id, "download_url": report.file_path}
 
 
-@router.get("/{report_id}/download")
-def download_report(report_id: int, user=Depends(get_current_user)):
+@router.get("/{report_id}/download", summary="Download Report")
+def download_report(report_id: int):
     with Session(engine) as session:
         report = session.get(Report, report_id)
         if not report or not report.file_path:
             raise HTTPException(status_code=404, detail="Report not found")
+
         file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), report.file_path.lstrip("/"))
         return FileResponse(path=file_path, filename=os.path.basename(file_path))
