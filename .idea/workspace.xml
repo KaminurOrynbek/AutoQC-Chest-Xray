@@ -5,12 +5,47 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87006f79-91aa-4112-bd3e-a769fcb6ce09" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/api/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/admin/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/admin/users.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/auth/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/auth/auth.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/patient/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/patient/patients.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/client/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/client/ml/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/config/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/config/db.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/enums/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/enums/user_roles.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/exams.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/patients.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/qc_records.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/users.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/repositories/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/repositories/base.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/repositories/patient_repository.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/repositories/user_repository.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/auth_service.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/patient_service.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/user_service.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/backend/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routers/reports.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routers/reports.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/app/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/auth.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/database.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/db.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/routers/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/routers/analytics.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/routers/records.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/routers/reports.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/seed.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/uploads/report_PT-2025-001.pdf" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,19 +70,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Kaminur/PycharmProjects/AutoQC Chest Xray"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Kaminur/PycharmProjects/AutoQC Chest Xray&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Kaminur\PycharmProjects\AutoQC Chest Xray" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Kaminur\PycharmProjects\AutoQC Chest Xray" />
+      <recent name="C:\Users\Kaminur\PycharmProjects\AutoQC Chest Xray\alembic" />
     </key>
   </component>
   <component name="SharedIndexes">
