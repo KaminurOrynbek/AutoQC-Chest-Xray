@@ -10,7 +10,8 @@ from app.api.patient import patients
 from app.api.exam import exams
 from app.api.qc import qc
 from app.api.ml import ml
-from app.api.dashboard import dashboard  # <-- добавили
+from app.api.dashboard import dashboard
+
 
 # Создаем приложение
 app = FastAPI(title="AutoQC Chest Xray API")
@@ -36,7 +37,7 @@ app.include_router(patients.router, prefix="/patients")
 app.include_router(exams.router, prefix="/exams")
 app.include_router(qc.router, prefix="/qc")
 app.include_router(ml.router, prefix="/ml")
-app.include_router(dashboard.router, prefix="/dashboard")  # <-- добавили
+app.include_router(dashboard.router, prefix="/dashboard")
 
 # Пример эндпоинта здоровья
 @app.get("/health")
