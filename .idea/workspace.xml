@@ -4,48 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87006f79-91aa-4112-bd3e-a769fcb6ce09" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/api/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/api/admin/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/api/admin/users.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/api/auth/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/api/auth/auth.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/api/patient/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/api/patient/patients.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/client/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/client/ml/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/config/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/config/db.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/enums/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/enums/user_roles.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/exams.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/patients.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/qc_records.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/users.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/repositories/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/repositories/base.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/repositories/patient_repository.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/repositories/user_repository.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/auth_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/patient_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/user_service.py" afterDir="false" />
+    <list default="true" id="87006f79-91aa-4112-bd3e-a769fcb6ce09" name="Changes" comment="fixed patient">
+      <change afterPath="$PROJECT_DIR$/app/api/exam/exams.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/ml/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/ml/ml.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/qc/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/qc/qc.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/client/ml.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/repositories/exam_repository.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/repositories/qc_repository.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/exam_service.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/qc_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/app/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/auth.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/database.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/db.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/models.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routers/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routers/analytics.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routers/records.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routers/reports.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/seed.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/uploads/report_PT-2025-001.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/client/ml/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/exam/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/exams.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/exams.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,6 +79,37 @@
       <option name="presentableId" value="Default" />
       <updated>1762105302111</updated>
     </task>
+    <task id="LOCAL-00001" summary="fixed">
+      <option name="closed" value="true" />
+      <created>1763594130334</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1763594130334</updated>
+    </task>
+    <task id="LOCAL-00002" summary="fixed admin">
+      <option name="closed" value="true" />
+      <created>1763600737181</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1763600737181</updated>
+    </task>
+    <task id="LOCAL-00003" summary="fixed patient">
+      <option name="closed" value="true" />
+      <created>1763601670553</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1763601670553</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="fixed" />
+    <MESSAGE value="fixed admin" />
+    <MESSAGE value="fixed patient" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed patient" />
   </component>
 </project>
