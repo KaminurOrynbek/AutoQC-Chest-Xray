@@ -1,6 +1,9 @@
-from sqlmodel import Session
+from sqlmodel import Session, select
 from app.models.patients import Patient
+from app.models.exams import Exam
 from app.repositories.patient_repository import PatientRepository
+from fastapi import HTTPException
+from app.models.qc_records import QCRecord
 
 class PatientService:
     def __init__(self, session: Session):
@@ -28,5 +31,23 @@ class PatientService:
         patient = self.repo.get_by_id(patient_id)
         if not patient:
             return False
-        self.repo.delete(patient)
+
+        session: Session = self.repo.session
+
+        # 1️⃣ Получаем все экзамены пациента
+        exams = session.exec(select(Exam).where(Exam.patient_id == patient_id)).all()
+
+        for exam in exams:
+            # 2️⃣ Удаляем все QC-записи для экзамена
+            qc_records = session.exec(select(QCRecord).where(QCRecord.exam_id == exam.id)).all()
+            for qc in qc_records:
+                session.delete(qc)
+
+            # 3️⃣ Удаляем сам экзамен
+            session.delete(exam)
+
+        # 4️⃣ Удаляем пациента
+        session.delete(patient)
+        session.commit()
+
         return True
