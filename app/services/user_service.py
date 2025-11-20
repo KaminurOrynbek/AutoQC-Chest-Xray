@@ -17,13 +17,11 @@ class UserService:
         return user
 
     def create_user(self, user: User) -> User:
-        return self.user_repo.create(user)
+        return self.user_repo.add(user)
 
     def update_user(self, user_id: int, **kwargs) -> User:
-        user = self.get_user(user_id)
-        for key, value in kwargs.items():
-            setattr(user, key, value)
-        return self.user_repo.update(user)
+        # вызываем update напрямую с user_id и kwargs
+        return self.user_repo.update(user_id, **kwargs)
 
     def delete_user(self, user_id: int):
         user = self.get_user(user_id)

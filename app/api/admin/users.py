@@ -27,6 +27,7 @@ def create_user(user: User, session: Session = Depends(get_session)):
 @router.put("/{user_id}")
 def update_user(user_id: int, user: User, session: Session = Depends(get_session)):
     service = UserService(session)
+    # исключаем unset поля, чтобы не затирать их None
     return service.update_user(user_id, **user.dict(exclude_unset=True))
 
 @router.delete("/{user_id}")
