@@ -4,23 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87006f79-91aa-4112-bd3e-a769fcb6ce09" name="Changes" comment="fixed patient">
-      <change afterPath="$PROJECT_DIR$/app/api/exam/exams.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/api/ml/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/api/ml/ml.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/api/qc/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/api/qc/qc.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/client/ml.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/repositories/exam_repository.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/repositories/qc_repository.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/exam_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/qc_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+    <list default="true" id="87006f79-91aa-4112-bd3e-a769fcb6ce09" name="Changes" comment="fixed exams">
+      <change afterPath="$PROJECT_DIR$/app/api/dashboard/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/dashboard/dashboard.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/dashboard_service.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/client/ml/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/exam/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/exams.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/exams.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/repositories/qc_repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/repositories/qc_repository.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,13 +93,22 @@
       <option name="project" value="LOCAL" />
       <updated>1763601670553</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="fixed exams">
+      <option name="closed" value="true" />
+      <created>1763602496026</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1763602496027</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fixed" />
     <MESSAGE value="fixed admin" />
     <MESSAGE value="fixed patient" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed patient" />
+    <MESSAGE value="fixed exams" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed exams" />
   </component>
 </project>
