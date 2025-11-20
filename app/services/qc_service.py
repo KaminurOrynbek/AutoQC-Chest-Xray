@@ -11,6 +11,10 @@ from reportlab.lib.units import cm
 import os
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.utils import ImageReader
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta
 import statistics
@@ -53,7 +57,34 @@ class QCService:
             session.add(qc_record)
             session.commit()
             session.refresh(qc_record)
-            return qc_record  # всегда возвращаем ORM-объект
+
+            # --- сохраняем оригинал ---
+            original_b64 = ml_result.get("original_image_base64") or ml_result.get("original")
+            if original_b64:
+                original_bytes = base64.b64decode(original_b64)
+                original_dir = os.path.join("app", "uploads", "original")
+                os.makedirs(original_dir, exist_ok=True)
+                original_path = os.path.join(original_dir, f"{qc_record.id}.png")
+                with open(original_path, "wb") as f:
+                    f.write(original_bytes)
+                qc_record.original_image_path = original_path
+
+            # --- сохраняем исправленное изображение ---
+            corrected_b64 = ml_result.get("processed_image_base64") or ml_result.get("corrected_image_base64") or ml_result.get("processed")
+            if corrected_b64:
+                corrected_bytes = base64.b64decode(corrected_b64)
+                corrected_dir = os.path.join("app", "uploads", "corrected")
+                os.makedirs(corrected_dir, exist_ok=True)
+                corrected_path = os.path.join(corrected_dir, f"{qc_record.id}.png")
+                with open(corrected_path, "wb") as f:
+                    f.write(corrected_bytes)
+                qc_record.corrected_image_path = corrected_path
+
+            # update ml_results_json may remain as-is
+            session.add(qc_record)
+            session.commit()
+            session.refresh(qc_record)
+            return qc_record
         finally:
             session.close()
 
@@ -81,12 +112,25 @@ class QCService:
             record = session.query(QCRecord).filter(QCRecord.id == qc_id).first()
             if not record:
                 raise RuntimeError("QC record not found")
+            # Prefer serving stored file paths if available
+            if original and record.original_image_path and os.path.isfile(record.original_image_path):
+                return StreamingResponse(open(record.original_image_path, "rb"), media_type="image/png")
+            if not original and record.corrected_image_path and os.path.isfile(record.corrected_image_path):
+                return StreamingResponse(open(record.corrected_image_path, "rb"), media_type="image/png")
 
-            ml_results = json.loads(record.ml_results_json)
+            # Fallback to ML JSON base64 content
+            ml_results = json.loads(record.ml_results_json or "{}")
             key = "original_image_base64" if original else "processed_image_base64"
             img_b64 = ml_results.get(key)
             if not img_b64:
-                raise RuntimeError("Image not found in ML results")
+                # try alternative keys
+                if original:
+                    img_b64 = ml_results.get("original")
+                else:
+                    img_b64 = ml_results.get("processed")
+
+            if not img_b64:
+                raise RuntimeError("Image not found")
 
             img_bytes = base64.b64decode(img_b64)
             return StreamingResponse(io.BytesIO(img_bytes), media_type="image/png")
@@ -259,6 +303,95 @@ class QCService:
             c.drawString(margin, y, "Отчёт QC / QC есеп (RU / KK)")
             y -= 20
 
+            # Patient information block
+            try:
+                c.setFont(font_bold_name, 12)
+                c.drawString(margin, y, "Информация о пациенте / Пациент туралы ақпарат")
+                y -= 14
+                c.setFont(font_name, 10)
+                if patient:
+                    first = getattr(patient, 'first_name', '') or ''
+                    last = getattr(patient, 'last_name', '') or ''
+                    patient_identifier = getattr(patient, 'patient_id', '') or ''
+                    birth = getattr(patient, 'birth_date', None)
+                    sex = getattr(patient, 'sex', '') or ''
+                    # compute age at exam date if possible
+                    age_str = ''
+                    try:
+                        if birth and getattr(exam, 'exam_date', None):
+                            age = (exam.exam_date.date() - birth).days / 365.25
+                            age_str = f"{int(age)}"
+                    except Exception:
+                        age_str = ''
+
+                    c.drawString(margin, y, f"Имя / Аты: {first} {last}    (ID: {patient_identifier})")
+                    y -= 12
+                    if birth:
+                        c.drawString(margin, y, f"Дата рождения / Туған күні: {birth}    Возраст на момент исследования: {age_str}")
+                        y -= 12
+                    else:
+                        c.drawString(margin, y, f"Дата рождения / Туған күні: —")
+                        y -= 12
+                    c.drawString(margin, y, f"Пол / Жынысы: {sex}")
+                    y -= 14
+                else:
+                    c.drawString(margin, y, "Пациент: информация не найдена")
+                    y -= 14
+            except Exception:
+                # if anything fails, continue silently
+                pass
+
+            # Small function to draw a matplotlib figure into the PDF
+            def draw_fig(fig, x, y_pos, max_w, max_h):
+                img_buf = io.BytesIO()
+                fig.savefig(img_buf, bbox_inches='tight', dpi=150)
+                plt.close(fig)
+                img_buf.seek(0)
+                img = ImageReader(img_buf)
+                iw, ih = img.getSize()
+                # scale to fit
+                scale = min(max_w / iw, max_h / ih, 1.0)
+                render_w = iw * scale
+                render_h = ih * scale
+                c.drawImage(img, x, y_pos - render_h, width=render_w, height=render_h)
+                return render_h
+
+            # Generate small charts: exams per day (top 10), modality distribution, heatmap
+            try:
+                # exams per day
+                days_items = sorted(counts_by_day.items())
+                if days_items:
+                    dates, counts = zip(*days_items)
+                    fig = plt.figure(figsize=(6, 2))
+                    plt.bar(dates[-20:], counts[-20:])
+                    plt.xticks(rotation=45, fontsize=6)
+                    plt.title('Exams per day')
+                    h = draw_fig(fig, margin, y, width - 2*margin, 120)
+                    y -= (h + 8)
+
+                # modality pie
+                if modality_counts:
+                    labels = list(modality_counts.keys())[:8]
+                    sizes = [modality_counts[k] for k in labels]
+                    fig = plt.figure(figsize=(4, 3))
+                    plt.pie(sizes, labels=labels, autopct='%1.1f%%')
+                    plt.title('Modality distribution')
+                    h = draw_fig(fig, margin, y, width/2 - margin, 150)
+                    # move x to the right for next chart
+                    right_x = margin + (width/2)
+                    # heatmap
+                    heat = [[heatmap.get((dow, hr), 0) for hr in range(24)] for dow in range(7)]
+                    fig2 = plt.figure(figsize=(4, 3))
+                    plt.imshow(heat, aspect='auto', cmap='hot')
+                    plt.title('Heatmap (weekday x hour)')
+                    plt.xlabel('Hour')
+                    plt.ylabel('Weekday')
+                    h2 = draw_fig(fig2, right_x, y, width/2 - margin, 150)
+                    y -= (max(h, h2) + 8)
+            except Exception:
+                # If plotting fails, continue without charts
+                pass
+
             # Exam / patient summary
             c.setFont(font_bold_name, 12)
             c.drawString(margin, y, "1. Общая активность и нагрузка / Жалпылама белсенділік және жүктеме")
@@ -311,6 +444,52 @@ class QCService:
                 c.drawString(margin, y, f"после: {avg_after:.3f}")
                 y -= 12
 
+            # Include QC records history for this exam (simple table)
+            try:
+                qc_history = session.query(QCModel).filter(QCModel.exam_id == exam_id).order_by(QCModel.created_at).all()
+                if qc_history:
+                    if y < margin + 120:
+                        c.showPage(); y = height - margin
+                    c.setFont(font_bold_name, 11)
+                    c.drawString(margin, y, "История QC / QC тарихы")
+                    y -= 14
+                    c.setFont(font_name, 9)
+                    for q in qc_history:
+                        ml = json.loads(q.ml_results_json or '{}')
+                        status = ml.get('status') or ml.get('qc_status') or ('FIXED' if q.corrected_image_path else 'FLAGGED')
+                        probs = ml.get('qc_probs') or {}
+                        created_by = getattr(q, 'created_by', '')
+                        created_at = getattr(q, 'created_at', '')
+                        line = f"{created_at} | by: {created_by} | status: {status} | probs: {', '.join([f'{k}:{v:.2f}' for k,v in (probs.items() if isinstance(probs, dict) else [])][:3])}"
+                        c.drawString(margin, y, line)
+                        y -= 10
+                        # include thumbnails (original / corrected) if available
+                        thumb_h = 0
+                        if q.original_image_path and os.path.isfile(q.original_image_path):
+                            try:
+                                img = ImageReader(q.original_image_path)
+                                iw, ih = img.getSize()
+                                scale = min((80) / iw, (60) / ih, 1.0)
+                                c.drawImage(img, margin, y - 60, width=iw*scale, height=ih*scale)
+                                thumb_h = max(thumb_h, ih*scale)
+                            except Exception:
+                                pass
+                        if q.corrected_image_path and os.path.isfile(q.corrected_image_path):
+                            try:
+                                img2 = ImageReader(q.corrected_image_path)
+                                iw2, ih2 = img2.getSize()
+                                scale2 = min((80) / iw2, (60) / ih2, 1.0)
+                                c.drawImage(img2, margin + 90, y - 60, width=iw2*scale2, height=ih2*scale2)
+                                thumb_h = max(thumb_h, ih2*scale2)
+                            except Exception:
+                                pass
+                        if thumb_h:
+                            y -= (thumb_h + 8)
+                        if y < margin + 80:
+                            c.showPage(); y = height - margin
+            except Exception:
+                pass
+
             # Footer with exam info
             if y < margin + 50:
                 c.showPage()
@@ -325,6 +504,29 @@ class QCService:
             if patient:
                 c.drawString(margin, y, f"Пациент: {getattr(patient, 'first_name', '')} {getattr(patient, 'last_name', '')} ({getattr(patient, 'patient_id', '')})")
                 y -= 12
+
+            # Embed original/corrected images for the current exam (if present)
+            try:
+                exam_qc_latest = exam_qc[-1] if exam_qc else None
+                if exam_qc_latest:
+                    img_x = margin
+                    img_max_w = (width - 2*margin) / 2 - 8
+                    img_max_h = 160
+                    # original
+                    if exam_qc_latest.original_image_path and os.path.isfile(exam_qc_latest.original_image_path):
+                        img = ImageReader(exam_qc_latest.original_image_path)
+                        iw, ih = img.getSize()
+                        scale = min(img_max_w/iw, img_max_h/ih, 1.0)
+                        c.drawImage(img, img_x, y - ih*scale, width=iw*scale, height=ih*scale)
+                    # corrected
+                    if exam_qc_latest.corrected_image_path and os.path.isfile(exam_qc_latest.corrected_image_path):
+                        img2 = ImageReader(exam_qc_latest.corrected_image_path)
+                        iw2, ih2 = img2.getSize()
+                        scale2 = min(img_max_w/iw2, img_max_h/ih2, 1.0)
+                        c.drawImage(img2, img_x + img_max_w + 16, y - ih2*scale2, width=iw2*scale2, height=ih2*scale2)
+                    y -= (img_max_h + 12)
+            except Exception:
+                pass
 
             c.showPage()
             c.save()
